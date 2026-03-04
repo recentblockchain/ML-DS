@@ -6,6 +6,8 @@ After the `Deploy GitHub Pages` workflow runs, the interactive React pages are a
 
 https://recentblockchain.github.io/DS-ML/
 
+The landing page lists links to all deployed interactive pages.
+
 If this is your first time using Pages for this repo, set:
 `Settings → Pages → Build and deployment → Source: Deploy from a branch`, then
 `Branch: gh-pages` and `/ (root)`.

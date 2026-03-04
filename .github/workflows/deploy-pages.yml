@@ -30,8 +30,66 @@ jobs:
           # Publish the interactive HTML pages as the site root
           cp -a "Interactive Pages/." site/
 
-          # This index page loads this JSX file via fetch()
-          cp -a feature_engineering_interactive.jsx site/
+          # Include any static assets referenced by built pages
+          if [ -d "assets" ]; then
+            cp -a "assets" site/
+          fi
+
+          # This page loads this JSX file via fetch()
+          if [ -f "feature_engineering_interactive.jsx" ]; then
+            cp -a "feature_engineering_interactive.jsx" site/
+          fi
+
+          # Move the existing index (feature engineering tool) aside, then generate a landing page.
+          if [ -f "site/index.html" ]; then
+            mv "site/index.html" "site/feature-engineering.html"
+          fi
+
+          python3 - << 'PY'
+          import os
+          import urllib.parse
+
+          site = 'site'
+          pages = []
+          for name in os.listdir(site):
+              if name.lower().endswith('.html') and name.lower() != 'index.html':
+                  pages.append(name)
+          pages.sort(key=lambda s: s.lower())
+
+          def link(name: str) -> str:
+              href = urllib.parse.quote(name)
+              return f'<li><a href="{href}">{name}</a></li>'
+
+          html = """<!doctype html>
+          <html lang=\"en\">
+            <head>
+              <meta charset=\"utf-8\" />
+              <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
+              <title>DS-ML — Interactive React Pages</title>
+              <style>
+                body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:24px;line-height:1.5}
+                h1{margin:0 0 6px 0}
+                p{margin:0 0 16px 0;color:#444}
+                ul{padding-left:18px}
+                li{margin:6px 0}
+              </style>
+            </head>
+            <body>
+              <h1>DS-ML — Interactive React Pages</h1>
+              <p>Click a page to open it.</p>
+              <ul>
+          """
+
+          html += "\n".join(link(p) for p in pages)
+          html += """
+              </ul>
+            </body>
+          </html>
+          """
+
+          with open(os.path.join(site, 'index.html'), 'w', encoding='utf-8', newline='\n') as f:
+              f.write(html)
+          PY
 
           # Avoid Jekyll processing
           touch site/.nojekyll
