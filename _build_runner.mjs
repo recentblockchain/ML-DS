@@ -14,7 +14,9 @@ const body = jsx
   .replace(/^\s*export\s+default\s+\w+\s*;?\s*$/gm, '');
 
 const baseName = path.basename(jsxArg, path.extname(jsxArg));
-const compMatch = jsx.match(/export\s+default\s+function\s+(\w+)/);
+// Match either: export default function Foo  OR  export default Foo;
+const compMatch = jsx.match(/export\s+default\s+function\s+(\w+)/) ||
+                  jsx.match(/export\s+default\s+(\w+)\s*;/);
 const compName = compMatch ? compMatch[1] : 'App';
 
 const html = `<!DOCTYPE html>
