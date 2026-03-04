@@ -8,3 +8,6 @@ https://recentblockchain.github.io/DS-ML/
 
 If this is your first time using Pages for this repo, ensure the repo setting is:
 `Settings → Pages → Source: GitHub Actions`.
+
+If the deploy workflow fails with a permissions error, also check:
+`Settings → Actions → General → Workflow permissions: Read and write`.
