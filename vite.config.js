@@ -68,6 +68,9 @@ export default defineConfig({
       plugins: [esbuildFixPlugin],
     },
   },
+  build: {
+    chunkSizeWarningLimit: 1000, // silence large-chunk warnings in CI
+  },
   server: {
     port: 3000,
     open: true,
