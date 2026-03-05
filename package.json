@@ -1,19 +1,21 @@
 {
-  "name": "deep-learning-architectures",
+  "name": "ds-ml-courseware",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:error": "vite build && move /Y index.html error_handling.html"
+    "dev": "node ./node_modules/vite/bin/vite.js --port 3000 --open",
+    "build": "node ./node_modules/vite/bin/vite.js build",
+    "preview": "node ./node_modules/vite/bin/vite.js preview"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lucide-react": "^0.462.0",
+    "recharts": "^2.13.3"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.0",
-    "vite-plugin-singlefile": "^2.3.0"
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.3"
   }
 }

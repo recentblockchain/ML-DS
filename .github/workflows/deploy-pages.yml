@@ -1,4 +1,4 @@
-name: Deploy GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -6,97 +6,45 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Prepare site
-        shell: bash
-        run: |
-          set -euo pipefail
-          rm -rf site
-          mkdir -p site
-
-          # Publish the interactive HTML pages as the site root
-          cp -a "Interactive Pages/." site/
-
-          # Include any static assets referenced by built pages
-          if [ -d "assets" ]; then
-            cp -a "assets" site/
-          fi
-
-          # This page loads this JSX file via fetch()
-          if [ -f "feature_engineering_interactive.jsx" ]; then
-            cp -a "feature_engineering_interactive.jsx" site/
-          fi
-
-          # Move the existing index (feature engineering tool) aside, then generate a landing page.
-          if [ -f "site/index.html" ]; then
-            mv "site/index.html" "site/feature-engineering.html"
-          fi
-
-          python3 - << 'PY'
-          import os
-          import urllib.parse
-
-          site = 'site'
-          pages = []
-          for name in os.listdir(site):
-              if name.lower().endswith('.html') and name.lower() != 'index.html':
-                  pages.append(name)
-          pages.sort(key=lambda s: s.lower())
-
-          def link(name: str) -> str:
-              href = urllib.parse.quote(name)
-              return f'<li><a href="{href}">{name}</a></li>'
-
-          html = """<!doctype html>
-          <html lang=\"en\">
-            <head>
-              <meta charset=\"utf-8\" />
-              <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
-              <title>DS-ML &mdash; Interactive React Pages</title>
-              <style>
-                body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:24px;line-height:1.5}
-                h1{margin:0 0 6px 0}
-                p{margin:0 0 16px 0;color:#444}
-                ul{padding-left:18px}
-                li{margin:6px 0}
-              </style>
-            </head>
-            <body>
-              <h1>DS-ML &mdash; Interactive React Pages</h1>
-              <p>Click a page to open it.</p>
-              <ul>
-          """
-
-          html += "\n".join(link(p) for p in pages)
-          html += """
-              </ul>
-            </body>
-          </html>
-          """
-
-          with open(os.path.join(site, 'index.html'), 'w', encoding='utf-8', newline='\n') as f:
-              f.write(html)
-          PY
-
-          # Avoid Jekyll processing
-          touch site/.nojekyll
-
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: site
-          publish_branch: gh-pages
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: node ./node_modules/vite/bin/vite.js build --base=/DS-ML/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
