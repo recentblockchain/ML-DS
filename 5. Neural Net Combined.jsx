@@ -7499,7 +7499,7 @@ Latent code: [0.23, -1.45, 0.89, ...]`,
 // COMBINED NAVIGATOR
 // ============================================================
 export default function NeuralNetCombined() {
-  const [activeModule, setActiveModule] = React.useState(0);
+  const [activeModule, setActiveModule] = useState(0);
   const modules = [
     { id: 0, label: '16. Adjusting Weight & Bias' },
     { id: 1, label: '17. Backprop Learn' },

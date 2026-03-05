@@ -1875,7 +1875,7 @@ const DEEP_LEARNING_PY_CODE = [
 ];
 
 function DeepLearningImplementation() {
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
   const handleCopy = () => {
     navigator.clipboard.writeText(DEEP_LEARNING_PY_CODE.join('\n')).then(() => {
       setCopied(true); setTimeout(() => setCopied(false), 2000);
@@ -5934,7 +5934,7 @@ function NeuralNetLesson() {
 // ============================================================
 
 export default function DeepLearningCombined() {
-  const [activeModule, setActiveModule] = React.useState(0);
+  const [activeModule, setActiveModule] = useState(0);
 
   const modules = [
     { id: 0, label: '14. DL Architectures' },

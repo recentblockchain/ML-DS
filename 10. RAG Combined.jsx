@@ -4324,7 +4324,7 @@ function RAGGuideComp() {
 // COMBINED NAVIGATION WRAPPER
 // ============================================================
 export default function RAGCombined() {
-  const [activeModule, setActiveModule] = React.useState(0);
+  const [activeModule, setActiveModule] = useState(0);
 
   const modules = [
     { id: 0, label: '39. RAG Basics' },
