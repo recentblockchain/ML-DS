@@ -4626,8 +4626,9 @@ function SectionActivations() {
   const zRange = Array.from({ length: 81 }, (_, i) => -4 + i * 0.1);
   const chartW = 260, chartH = 130;
   const mapX = z => ((z + 4) / 8) * chartW;
+  const identity = z => z; // named ref so === comparison works
   const mapY = (y, fn) => {
-    const [lo, hi] = fn === relu ? [0, 4] : fn === (z => z) ? [-4, 4] : [-1.1, 1.1];
+    const [lo, hi] = fn === relu ? [0, 4] : fn === identity ? [-4, 4] : [-1.1, 1.1];
     return chartH - ((y - lo) / (hi - lo)) * chartH;
   };
 

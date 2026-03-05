@@ -3438,7 +3438,7 @@ function LayersSection() {
             <span className="fc"># When x₁=x₂=0: z must be 0. Neuron can't fire!</span>{"\n\n"}
             <span className="fc"># With bias:</span>{"\n"}
             z = w₁×x₁ + w₂×x₂ + b{"\n"}
-            <span className="fc"># When x₁=x₂=0: z = b. Neuron CAN fire if b > 0!</span>{"\n\n"}
+            <span className="fc"># When x₁=x₂=0: z = b. Neuron CAN fire if b &gt; 0!</span>{"\n\n"}
             <span className="fc"># Bias shifts the activation threshold:</span>{"\n"}
             σ(b=−3) → fires only for large inputs{"\n"}
             σ(b=0)  → fires at z=0{"\n"}
