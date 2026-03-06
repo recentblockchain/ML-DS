@@ -8319,7 +8319,7 @@ export default function CombinedDeepLearning() {
   ];
 
   return (
-    <div style={{ fontFamily: "sans-serif", background: "#0b0e16", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "sans-serif", background: "#0b0e16", color: "#cdd5e0", minHeight: "100vh" }}>
       {/* Module navigation bar */}
       <div style={{
         display: "flex", flexWrap: "wrap", gap: 8, padding: "12px 16px",
