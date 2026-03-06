@@ -3872,7 +3872,7 @@ function QuizSection() {
 /* ═══════════════════════════════════════════════════════════
    MAIN APP
 ═══════════════════════════════════════════════════════════ */
-const TABS = [
+const TABS_BT = [
   {id:"what",  label:"📖 What Is It?"},
   {id:"why",   label:"❓ Why Use It?"},
   {id:"fwd",   label:"🔜 Forward Pass"},
@@ -3888,8 +3888,8 @@ function BackpropTutorial() {
   const sections = {
     what:   <WhatIs />,
     why:    <WhyUse />,
-    fwd:    <ForwardPassSection />,
-    back:   <BackpropSection />,
+    fwd:    <ForwardPassSectionFF />,
+    back:   <BackpropSectionFF />,
     layers: <LayersSection />,
     live:   <LiveTrainer />,
     quiz:   <QuizSection />,
@@ -3916,7 +3916,7 @@ function BackpropTutorial() {
 
         {/* Tabs */}
         <div className="tabs">
-          {TABS.map(t=>(
+          {TABS_BT.map(t=>(
             <button key={t.id} className={`tab ${tab===t.id?"active":""}`} onClick={()=>setTab(t.id)}>
               {t.label}
             </button>
@@ -3968,7 +3968,7 @@ const TRAIN_DATA = DATASET.slice(0, 6);
 const TEST_DATA  = DATASET.slice(6);
 
 // ─── Forward pass for 2→2→1 network ─────────────────────────────────────────
-function forwardPass(x, W1, b1, W2, b2) {
+function forwardPassFF(x, W1, b1, W2, b2) {
   // Hidden layer
   const z1 = [
     W1[0][0] * x[0] + W1[0][1] * x[1] + b1[0],
@@ -3983,7 +3983,7 @@ function forwardPass(x, W1, b1, W2, b2) {
 
 // ─── Gradient computation (backprop for MSE + sigmoid_eh) ───────────────────────
 function backprop(x, y, W1, b1, W2, b2) {
-  const { z1, h1, z2, out } = forwardPass(x, W1, b1, W2, b2);
+  const { z1, h1, z2, out } = forwardPassFF(x, W1, b1, W2, b2);
   // Output layer gradients
   const dL_dout = out - y;                         // dMSE/dout (factor 2 absorbed)
   const dout_dz2 = sigmoidPrime(z2);
@@ -4068,7 +4068,7 @@ const Slider = ({ label, value, min, max, step = 0.01, onChange, color = T.amber
   </div>
 );
 
-const Btn = ({ children, onClick, color = T.amber, disabled = false, small = false }) => (
+const BtnFF = ({ children, onClick, color = T.amber, disabled = false, small = false }) => (
   <button onClick={onClick} disabled={disabled} style={{
     padding: small ? "5px 12px" : "9px 20px",
     borderRadius: 8, border: `1px solid ${disabled ? T.dimmer : color}`,
@@ -4137,7 +4137,7 @@ const LossCurve = ({ history, color = T.amber, label = "Loss", height = 100 }) =
 };
 
 // ─── Neural Network Diagram ───────────────────────────────────────────────────
-const NNDiagram = ({ x, h1, out, W1, W2, b1, b2, highlight = null }) => {
+const NNDiagramFF = ({ x, h1, out, W1, W2, b1, b2, highlight = null }) => {
   const nodes = {
     i0: { cx: 60,  cy: 80,  label: `x₁\n${fmt2(x[0])}`,   color: T.blue },
     i1: { cx: 60,  cy: 180, label: `x₂\n${fmt2(x[1])}`,   color: T.blue },
@@ -4466,7 +4466,7 @@ Taking the square root:
 // ══════════════════════════════════════════════════════════════════════════════
 // SECTION 3 — Network Forward Pass Step by Step
 // ══════════════════════════════════════════════════════════════════════════════
-function ForwardPassSection() {
+function ForwardPassSectionFF() {
   const [stepIdx, setStepIdx] = useState(0);
   const [sampleIdx, setSampleIdx] = useState(0);
   const sample = TRAIN_DATA[sampleIdx];
@@ -4641,7 +4641,7 @@ Biases  b1: [${b1}]
 Weights W2: [${W2}]
 Bias    b2:  ${b2}`}</Formula>
           </div>
-          <NNDiagram x={x} h1={[h1_0,h1_1]} out={out} W1={W1} W2={W2} b1={b1} b2={b2} />
+          <NNDiagramFF x={x} h1={[h1_0,h1_1]} out={out} W1={W1} W2={W2} b1={b1} b2={b2} />
         </div>
       </Panel>
 
@@ -4661,8 +4661,8 @@ Bias    b2:  ${b2}`}</Formula>
         <Label color={steps[stepIdx].color}>{steps[stepIdx].title}</Label>
         {steps[stepIdx].content}
         <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
-          <Btn onClick={() => setStepIdx(i => Math.max(0, i-1))} disabled={stepIdx===0} color={steps[stepIdx].color} small>◀ Previous</Btn>
-          <Btn onClick={() => setStepIdx(i => Math.min(steps.length-1, i+1))} disabled={stepIdx===steps.length-1} color={steps[stepIdx].color} small>Next ▶</Btn>
+          <BtnFF onClick={() => setStepIdx(i => Math.max(0, i-1))} disabled={stepIdx===0} color={steps[stepIdx].color} small>◀ Previous</BtnFF>
+          <BtnFF onClick={() => setStepIdx(i => Math.min(steps.length-1, i+1))} disabled={stepIdx===steps.length-1} color={steps[stepIdx].color} small>Next ▶</BtnFF>
         </div>
       </Panel>
     </div>
@@ -4672,7 +4672,7 @@ Bias    b2:  ${b2}`}</Formula>
 // ══════════════════════════════════════════════════════════════════════════════
 // SECTION 4 — Backpropagation & Weight Adjustment
 // ══════════════════════════════════════════════════════════════════════════════
-function BackpropSection() {
+function BackpropSectionFF() {
   const [lr, setLr] = useState(0.5);
   const [W1, setW1] = useState([[0.5, -0.3], [0.2, 0.8]]);
   const [b1, setB1] = useState([0.1, -0.1]);
@@ -4822,9 +4822,9 @@ A small gradient → small influence → small adjustment.`}</Formula>
               ))}
             </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <Btn onClick={updateWeights} color={T.green}>▶ Apply Update</Btn>
-              <Btn onClick={() => { for(let i=0;i<20;i++) updateWeights(); }} color={T.amber} small>▶▶ 20 Steps</Btn>
-              <Btn onClick={reset} color={T.dim} small>↺ Reset</Btn>
+              <BtnFF onClick={updateWeights} color={T.green}>▶ Apply Update</BtnFF>
+              <BtnFF onClick={() => { for(let i=0;i<20;i++) updateWeights(); }} color={T.amber} small>▶▶ 20 Steps</BtnFF>
+              <BtnFF onClick={reset} color={T.dim} small>↺ Reset</BtnFF>
             </div>
             {history.length > 0 && (
               <div style={{ marginTop: 12 }}>
@@ -4877,7 +4877,7 @@ function TrainTestSection() {
   const intervalRef = useRef(null);
 
   const computeLoss = (data, cW1, cb1, cW2, cb2) => {
-    const preds = data.map(s => forwardPass(s.x, cW1, cb1, cW2, cb2).out);
+    const preds = data.map(s => forwardPassFF(s.x, cW1, cb1, cW2, cb2).out);
     const tgts = data.map(s => s.y);
     return rmse(preds, tgts);
   };
@@ -4958,10 +4958,10 @@ function TrainTestSection() {
       <Panel glow={T.green} style={{ marginBottom: 18 }}>
         <Label color={T.green}>Training Simulator — Watch Both Curves</Label>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16, alignItems: "center" }}>
-          <Btn onClick={() => runEpochs(1)} color={T.green}>▶ 1 Epoch</Btn>
-          <Btn onClick={() => runEpochs(10)} color={T.cyan} small>▶▶ 10 Epochs</Btn>
-          <Btn onClick={() => runEpochs(50)} color={T.amber} small>▶▶▶ 50 Epochs</Btn>
-          <Btn onClick={reset} color={T.dim} small>↺ Reset</Btn>
+          <BtnFF onClick={() => runEpochs(1)} color={T.green}>▶ 1 Epoch</BtnFF>
+          <BtnFF onClick={() => runEpochs(10)} color={T.cyan} small>▶▶ 10 Epochs</BtnFF>
+          <BtnFF onClick={() => runEpochs(50)} color={T.amber} small>▶▶▶ 50 Epochs</BtnFF>
+          <BtnFF onClick={reset} color={T.dim} small>↺ Reset</BtnFF>
           <span style={{ fontFamily: T.mono, fontSize: 12, color: T.dim }}>Epoch: <strong style={{ color: T.text }}>{epochs}</strong></span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
@@ -5064,11 +5064,11 @@ function FullLab() {
       b2 = b2 - lr_*db2;
     }
     const newW = { W1, b1, W2, b2 };
-    const preds = DATASET.map(s=>forwardPass(s.x,newW.W1,newW.b1,newW.W2,newW.b2).out);
+    const preds = DATASET.map(s=>forwardPassFF(s.x,newW.W1,newW.b1,newW.W2,newW.b2).out);
     const tgts = DATASET.map(s=>s.y);
     const mseV = mse(preds,tgts), rmseV = rmse(preds,tgts);
-    const trainP = TRAIN_DATA.map(s=>forwardPass(s.x,newW.W1,newW.b1,newW.W2,newW.b2).out);
-    const testP  = TEST_DATA.map(s=>forwardPass(s.x,newW.W1,newW.b1,newW.W2,newW.b2).out);
+    const trainP = TRAIN_DATA.map(s=>forwardPassFF(s.x,newW.W1,newW.b1,newW.W2,newW.b2).out);
+    const testP  = TEST_DATA.map(s=>forwardPassFF(s.x,newW.W1,newW.b1,newW.W2,newW.b2).out);
     ref.current.W = newW;
     setW(newW);
     setEpochs(e=>e+1);
@@ -5097,7 +5097,7 @@ function FullLab() {
     setHistory({ train:[], test:[], mse:[], rmse:[] });
   };
 
-  const curPreds = DATASET.map(s => forwardPass(s.x, W.W1, W.b1, W.W2, W.b2).out);
+  const curPreds = DATASET.map(s => forwardPassFF(s.x, W.W1, W.b1, W.W2, W.b2).out);
   const curMse = mse(curPreds, DATASET.map(s=>s.y));
   const curRmse = rmse(curPreds, DATASET.map(s=>s.y));
 
@@ -5109,10 +5109,10 @@ function FullLab() {
           <Slider label="Learning Rate" value={lr} min={0.01} max={2.0} step={0.01} onChange={setLr} color={T.amber} />
         </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
-          <Btn onClick={step} color={T.green} small>▶ 1 Epoch</Btn>
-          <Btn onClick={() => { for(let i=0;i<10;i++) step(); }} color={T.cyan} small>▶▶ 10</Btn>
-          <Btn onClick={runContinuous} color={running ? T.red : T.amber}>{running ? "⏹ Stop" : "▶▶▶ Auto Train"}</Btn>
-          <Btn onClick={reset} color={T.dim} small>↺ Reset</Btn>
+          <BtnFF onClick={step} color={T.green} small>▶ 1 Epoch</BtnFF>
+          <BtnFF onClick={() => { for(let i=0;i<10;i++) step(); }} color={T.cyan} small>▶▶ 10</BtnFF>
+          <BtnFF onClick={runContinuous} color={running ? T.red : T.amber}>{running ? "⏹ Stop" : "▶▶▶ Auto Train"}</BtnFF>
+          <BtnFF onClick={reset} color={T.dim} small>↺ Reset</BtnFF>
           <span style={{ fontFamily: T.mono, fontSize: 12, color: T.dim }}>Epoch <strong style={{ color: T.text }}>{epochs}</strong></span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10, marginBottom: 16 }}>
